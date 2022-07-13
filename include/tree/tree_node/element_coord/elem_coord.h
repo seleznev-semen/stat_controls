@@ -80,11 +80,11 @@ public:
          typename FilterT,
          typename = std::enable_if_t< std::is_same_v< FilterType, std::remove_reference_t< FilterT > > >
        >
-   ElemCoord( std::size_t section, RowCoordT rows, ColCoordT cols, const FilterT filters = FilterT() )
+   ElemCoord( std::size_t section, RowCoordT&& rows, ColCoordT&& cols, FilterT&& filters = FilterT() )
       : mSection( section )
-      , mRows( std::forward( rows ) )
-      , mColumns( std::forward( cols ) )
-      , mFilters( std::forward( filters ) )
+      , mRows( std::forward< RowCoordT >( rows ) )
+      , mColumns( std::forward< ColCoordT >( cols ) )
+      , mFilters( std::forward< FilterT >( filters ) )
    {}
 
    ElemCoord( std::size_t section, std::size_t row, std::size_t col, const std::string& filter = ""  )
