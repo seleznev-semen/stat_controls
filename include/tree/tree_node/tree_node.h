@@ -1,6 +1,10 @@
 #pragma once
-#include <forward_types.h>
+#include <list>
+#include <memory>
 
+class ITreeNode;
+using NodePtr = std::shared_ptr< ITreeNode >;
+using NodeList = std::list< NodePtr >;
 
 class ITreeNode
 {
@@ -31,14 +35,11 @@ public:
    void AddChildren( const NodeList& children );
    void AddChildren( NodeList&& children );
 
-   void AddChildren( const NodeList& children );
-   void AddChildren( NodeList&& children );
-
    void AddChild( const NodePtr& new_child );
    void AddChild( NodePtr&& new_child );
 
 protected:
-	NodePtr   mParent;
+   NodePtr mParent;
 	NodeList mChildren;
 };
 

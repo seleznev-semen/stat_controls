@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
+#include <list>
 
-#include <forward_types.h>
 #include <traits.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -53,6 +53,12 @@ private:
    ValT mRhsLim;
 };
 
+// TODO может содержать знак "*" - т.е. для все перечисления для текущей координаты
+// Список перечислений по координатам row и col
+using CoordType = std::list< CoordRange< std::size_t > >;
+// Список специфик правила
+using FilterType = std::list< CoordRange< std::string > >;
+
 ///////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
@@ -64,32 +70,20 @@ public:
    template
       <
          typename RowCoordT,
-         typename = enable_if_t< std::is_same_v< CoordType, std::remove_reference_t< RowCoordT > > > >,
+         typename = std::enable_if_t< std::is_same_v< CoordType, std::remove_reference_t< RowCoordT > > >,
          typename ColCoordT,
-         typename = enable_if_t< std::is_same_v< CoordType, std::remove_reference_t< ColCoordT > > > >,
+         typename = std::enable_if_t< std::is_same_v< CoordType, std::remove_reference_t< ColCoordT > > >,
          typename FilterT,
-         typename = enable_if_t< std::is_same_v< FilterType, std::remove_reference_t< FilterT > > > >
+         typename = std::enable_if_t< std::is_same_v< FilterType, std::remove_reference_t< FilterT > > >
        >
    ElemCoord( std::size_t section, RowCoordT rows, ColCoordT cols, const FilterT filters = FilterT() )
       : mSection( section )
-   {
-      if constexpr( std::is_rvalue_reference< RowCoordT >::value )
-         mRows = std::forward( rows );
-      else
-         mRows = rows;
+      , mRows( std::forward( rows ) )
+      , mColumns( std::forward( cols ) )
+      , mFilters( std::forward( filters ) )
+   {}
 
-      if constexpr( std::is_rvalue_reference< ColCoordT >::value )
-         mCols = std::forward( cols );
-      else
-         mCols = cols;
-
-      if constexpr( std::is_rvalue_reference< FilterT >::value )
-         mFilters = std::forward( filters );
-      else
-         mFilters = filters;
-   }
-
-   ElemCoord( std::size_t section, std::size_t row, std::size_t col, const std::string& filter = L""  )
+   ElemCoord( std::size_t section, std::size_t row, std::size_t col, const std::string& filter = ""  )
       : mSection  ( section )
       , mRows     ( CoordType{ row } )
       , mColumns  ( CoordType{ col } )

@@ -1,7 +1,8 @@
 #pragma once
 #include <tree/tree_node/tree_node.h>
 #include <tree/tree_node/element_coord/elem_coord.h>
-#include <forward_types.h>
+
+class ElemCoord;
 
 class ElementNode : public ITreeNode
 {
@@ -21,12 +22,12 @@ public:
    ElementNode& operator=( const ElementNode& other ) = default;
    ElementNode& operator=( ElementNode&& other ) = default;
 
-   void SetPosition( const ElemCoord& position )
+   inline void SetPosition( const ElemCoord& position )
    {
       mPosition = position;
    }
 
-   void SetPosition( ElemCoord&& position )
+   inline void SetPosition( ElemCoord&& position )
    {
       std::swap( mPosition, position );
    }

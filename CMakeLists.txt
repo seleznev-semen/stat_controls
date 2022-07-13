@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
 project(stat_controls LANGUAGES CXX)
 
@@ -17,15 +17,26 @@ file(GLOB_RECURSE SRC_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/tree/tree_node/element_coordinate/*.cpp
 )
 
+file(GLOB_RECURSE HEADER_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/tree/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/tree/tree_node/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/tree/tree_node/element_coordinate/*.h
+)
+
 add_executable(stat_exec
     main.cpp
     ${SRC_FILES}
+    ${HEADER_FILES}
 )
 
 target_include_directories(stat_exec
     PUBLIC
          ${CMAKE_CURRENT_SOURCE_DIR}/include
+         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
+
+
 
 set_target_properties(stat_exec
    PROPERTIES RUNTIME_OUTPUT_DIRECTORY

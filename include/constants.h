@@ -6,7 +6,7 @@
 namespace constants
 {
 
-static const std::unordered_map< std::string, size_t > FUNCTION_PARAMETER_COUNT
+static const std::unordered_map< std::string, std::size_t > FUNCTION_PARAMETER_COUNT
 {
    { "isnull",    2 },     //
    { "abs",       1 },     //
