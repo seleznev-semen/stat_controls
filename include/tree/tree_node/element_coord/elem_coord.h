@@ -9,41 +9,29 @@
 /// Перечисление координаты
 
 template< typename ValT >
-class CoordRange
+class ValueRange
 {
-public:
+public:	
 	template< typename VT, typename = StringT< VT > >
-	CoordRange( const VT& lhs_lim, const VT& rhs_lim )	
-		: mLhsLim( lhs_lim )
-		, mRhsLim( rhs_lim )
+   ValueRange( VT&& lhs_lim, VT&& rhs_lim )
+      : mLhsLim( std::forward< VT >( lhs_lim ) )
+      , mRhsLim( std::forward< VT >( rhs_lim ) )
 	{}
-	
-	template< typename VT, typename = StringT< VT > >
-	CoordRange( VT&& lhs_lim, VT&& rhs_lim )	
-		: mLhsLim( std::move( lhs_lim ) )
-		, mRhsLim( std::move( rhs_lim ) )
-	{}
+
+   template< typename VT, typename = StringT< VT > >
+   ValueRange( VT&& single_coord )
+      : mLhsLim( std::forward< VT >( single_coord ) )
+      , mRhsLim( std::forward< VT >( single_coord ) )
+   {}
 
 	template< typename VT, typename = IntT< VT > >
-	CoordRange( VT lhs_lim, VT rhs_lim )
+   ValueRange( VT lhs_lim, VT rhs_lim )
 		: mLhsLim( lhs_lim )
 		, mRhsLim( rhs_lim )
 	{}
 
-   template< typename VT, typename = StringT< VT > >
-   CoordRange( const VT& single_coord )
-      : mLhsLim( single_coord )
-      , mRhsLim( single_coord )
-   {}
-
-   template< typename VT, typename = StringT< VT > >
-   CoordRange( VT&& single_coord )
-      : mLhsLim( std::move( single_coord ) )
-      , mRhsLim( std::move( single_coord ) )
-   {}
-
    template< typename VT, typename = IntT< VT > >
-   CoordRange( VT single_coord )
+   ValueRange( VT single_coord )
       : mLhsLim( single_coord )
       , mRhsLim( single_coord )
    {}
@@ -53,11 +41,27 @@ private:
    ValT mRhsLim;
 };
 
-// TODO может содержать знак "*" - т.е. для все перечисления для текущей координаты
-// Список перечислений по координатам row и col
-using CoordType = std::list< CoordRange< std::size_t > >;
+template< typename T >
+auto ValueRangeFactory( T&& value )
+{
+   ValueRange< remove_const_reference_t< T > > result( std::forward< T >( value ) );
+   return result;
+}
+
+template< typename T >
+auto ValueRangeFactory( T&& lhs, T&& rhs )
+{
+   ValueRange< remove_const_reference_t< T > > result( std::forward< T >( lhs ), std::forward< T >( rhs ) );
+   return result;
+}
+
+// Список перечислений по координатам row и col. TODO может содержать знак "*" - для всех перечислений по координате
+using CoordRange = ValueRange< std::size_t >;
+using CoordType = std::list< CoordRange >;
+
 // Список специфик правила
-using FilterType = std::list< CoordRange< std::string > >;
+using FilterRange = ValueRange< std::string >;
+using FilterType = std::list< FilterRange >;
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -87,8 +91,10 @@ public:
       : mSection  ( section )
       , mRows     ( CoordType{ row } )
       , mColumns  ( CoordType{ col } )
-      , mFilters  ( filter.empty() ? FilterType() : FilterType{ filter } )
-   {}
+   {
+      if( !filter.empty() )
+         FilterType{ ValueRangeFactory( filter ) };
+   }
 
 	ElemCoord( const ElemCoord& ) = default;
 	ElemCoord( ElemCoord&& ) = default;

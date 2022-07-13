@@ -17,10 +17,10 @@ using NodeList = std::list< NodePtr >;
 class ScalarNode;
 
 class ElementNode;
-template< typename ValT > class CoordRange;
+template< typename ValT > class ValueRange;
 // TODO может содержать знак "*" - т.е. для все перечисления для текущей координаты
 // Список перечислений по координатам row и col
-using CoordType = std::list< CoordRange< std::size_t > >;
+using CoordType = std::list< ValueRange< std::size_t > >;
 // Список специфик правила
-using FilterType = std::list< CoordRange< std::string > >;
+using FilterType = std::list< ValueRange< std::string > >;
 class ElemCoord;
