@@ -1,6 +1,10 @@
-#include <iostream>
-#include <tree/tree_node/element_coord/elem_coord.h>
-using namespace std;
+﻿#include <iostream>
+#include <tree_node/element_coord/elem_coord.h>
+#include <tree_node/arithmetic_node.h>
+#include <tree_node/function_node.h>
+#include <tree_node/tree_node_factory.h>
+#include <types.h>
+#include <tree.h>
 
 void ctor_tests()
 {
@@ -12,12 +16,9 @@ void ctor_tests()
    CoordRange( 1 );
    CoordRange( std::size_t( 1 ) );
    CoordRange( std::size_t( 1 ), std::size_t( 1 ) );
-   auto cr1 = ValueRangeFactory( 1 );
-   auto cr2 = ValueRangeFactory( 1, 1 );
 
    // CoordRange( 2.2, 3.3 );                   // CE - OK
    // CoordRange( 2.2 );                        // CE - OK
-   // auto error = ValueRangeFactory( 4.4 );    // CE - OK
 
    // lvalue
    int i1 = 3, i2 = 1;
@@ -26,8 +27,6 @@ void ctor_tests()
    CoordRange( i1, i2 );
    CoordRange( szt1, szt2 );
    // CoordRange( szt1 );              // CE!!! WTF
-   auto cr3 = ValueRangeFactory( szt1 );
-   auto cr4 = ValueRangeFactory( szt1, szt2 );
    ///////////////////////
 
    ///////////////////////
@@ -38,13 +37,10 @@ void ctor_tests()
    FilterRange( "asd", "fgh" );
    FilterRange( std::string( "asd" ), std::string( "fgh" ) );
    // TODO FIXME
-   // auto fr1 = ValueRangeFactory( "asd" ); // CE: no matching ctor aaray char[4] -> FilterRange
-   auto fr2 = ValueRangeFactory( std::string( "asd" ), std::string( "fgh" ) );
 
    // lvalue
    std::string s1 = "asd", s2 = "dfg";
    FilterRange( s1, s2 );
-   auto fr3 = ValueRangeFactory( s1 );
    ///////////////////////
 
    ///////////////////////
@@ -53,18 +49,11 @@ void ctor_tests()
    CoordType();
    CoordType{};
    CoordType{ CoordRange( 1 ) };
-   CoordType{ CoordRange( 1, 2 ) };
+   auto ct1 = CoordType{ CoordRange( 1, 2 ) };
    CoordType{ CoordRange( 1 ), CoordRange( 1, 2 ) };
    // TODO FIXME - compile error here
-   // CoordType{ ValueRangeFactory( 1 ) };
-   CoordType{ ValueRangeFactory( std::size_t( 1 ) ) };
 
    // lvalue
-   CoordType{ cr3 };
-   CoordType{ cr3, cr4 };
-   CoordType{ cr3, CoordRange( 1 ) };
-   // TODO FIXME - compile error here
-   // CoordType{ cr4, ValueRangeFactory( 1 ) };
    ///////////////////////
 
    ///////////////////////
@@ -74,13 +63,8 @@ void ctor_tests()
    FilterType{};
    FilterType{ FilterRange( "asd" ) };
    FilterType{ FilterRange( "asd", "fgh" ) };
-   FilterType{ ValueRangeFactory( std::string( "asd" ) ) };
 
    // lvalue
-   FilterType{ fr2 };
-   FilterType{ fr2, fr3 };
-   FilterType{ fr2, FilterRange( "asd" ) };
-   FilterType{ fr2, ValueRangeFactory( std::string( "asd" ) ) };
    ///////////////////////
 
    ///////////////////////
@@ -89,14 +73,29 @@ void ctor_tests()
    ElemCoord( 1, 2, 3, "asd" );
    ElemCoord( 1, 2, 3, std::string( "asd" ) );
    ElemCoord( 1, 2, 3 );
+   ElemCoord( std::size_t( 1 ), CoordType{ CoordRange( 1, 1 ) }, CoordType{ CoordRange( 2, 2 ) } );
+   ElemCoord( 1, CoordType{ CoordRange( 1, 1 ) }, CoordType{ CoordRange( 2, 2 ) }, FilterType{ FilterRange("1", "4") } );
+   ElemCoord( 1, CoordType{ 1 }, CoordType{ CoordRange( 2, 2 ) }, FilterType{ FilterRange("1", "4") } );
+   ElemCoord( 1, CoordType{ 1 }, CoordType{ CoordRange( 2, 2 ) }, FilterType{ "FilterRange()" } );
    ElemCoord( 1, 2, 3, "asd" );
-   // TODO FIXEME -> compile error here
-   // ElemCoord( std::size_t( 1 ), CoordType{ CoordRange( 1, 1 ) }, CoordType{ CoordRange( 2, 2 ) } );
+
+   //lvalue
+   ElemCoord( i1, i2, szt1, "asd" );
+   ElemCoord( i1, i2, szt1, s1 );
+   ElemCoord( i1, i2, szt1 );
    ///////////////////////
+
+   auto n = NodeFactory::MakeNode< LexemeType::SCALAR >( "1" );
+   ArithmeticNode( "+" );
+   auto n1 = NodeFactory::MakeNode< LexemeType::ARITHMETIC >( "+" );
+   auto n2 = NodeFactory::MakeNode< LexemeType::FUNCTION >( "coalesce" );
+
+   FilterType{ FilterRange( "asd" ), FilterRange( "fgh" ), FilterRange( "qwe" ) };
+
 }
 
 int main()
 {
-   ctor_tests();
+   //ctor_tests();
    return 0;
 }
