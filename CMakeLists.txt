@@ -43,4 +43,9 @@ target_link_libraries(stat_exec
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/parser)
 
+target_link_libraries(stat_exec
+   PUBLIC
+      parser
+)
+
 target_compile_options(stat_exec PUBLIC -g3 -o0)

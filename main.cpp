@@ -6,6 +6,8 @@
 #include <types.h>
 #include <tree.h>
 
+#include <parser.h>
+
 void ctor_tests()
 {
    /** c-tors tests*/
@@ -96,6 +98,7 @@ void ctor_tests()
 
 int main()
 {
-   //ctor_tests();
+   //Parse();
+   SimpleSemanticActions();
    return 0;
 }
